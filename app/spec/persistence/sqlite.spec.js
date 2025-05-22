@@ -1,6 +1,7 @@
+process.env.SQLITE_DB_LOCATION = './test-todo.db';
 const db = require('../../src/persistence/sqlite');
 const fs = require('fs');
-const location = process.env.SQLITE_DB_LOCATION || '/etc/todos/todo.db';
+const location = process.env.SQLITE_DB_LOCATION;
 
 const ITEM = {
     id: '7aef3d7c-d301-4846-8358-2a91ec9d6be3',
@@ -65,4 +66,14 @@ test('it can get a single item', async () => {
 
     const item = await db.getItem(ITEM.id);
     expect(item).toEqual(ITEM);
+});
+
+// Add afterAll to clean up test DB file
+afterAll(async () => {
+    if (typeof db.teardown === 'function') {
+        await db.teardown();
+    }
+    if (fs.existsSync(location)) {
+        fs.unlinkSync(location);
+    }
 });
