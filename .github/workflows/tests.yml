@@ -11,4 +11,6 @@ jobs:
         with:
           node-version: '16'
       - run: yarn install
+        working-directory: app
       - run: yarn test
+        working-directory: app
