@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the todos snapshot 1`] = `
+[
+  {
+    "completed": false,
+    "id": "7aef3d7c-d301-4846-8358-2a91ec9d6be3",
+    "name": "Test",
+  },
+]
+`;
