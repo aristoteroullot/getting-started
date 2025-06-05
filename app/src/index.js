@@ -1,4 +1,5 @@
 const express = require('express');
+const client = require('prom-client');
 const app = express();
 const db = require('./persistence');
 const getItems = require('./routes/getItems');
@@ -9,13 +10,26 @@ const deleteItem = require('./routes/deleteItem');
 app.use(express.json());
 app.use(express.static(__dirname + '/static'));
 
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics();
+
+const httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+});
+
 app.get('/items', getItems);
 app.post('/items', addItem);
 app.put('/items/:id', updateItem);
 app.delete('/items/:id', deleteItem);
 
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+});
+
 db.init().then(() => {
-    app.listen(3001, () => console.log('Listening on port 3001'));
+    app.listen(3000, '0.0.0.0', () => console.log('Listening on port 3000'));
 }).catch((err) => {
     console.error(err);
     process.exit(1);
